@@ -4,6 +4,7 @@ from shapely.geometry import Point
 
 # Load barrio boundaries -- barrio names are already clean strings, no codigo fix needed
 barrios = gpd.read_file('data/geo/barranquilla_barrios.geojson')
+barrios = barrios[barrios['barrio'].str.strip() != '']
 
 # Load your cleaned listings and keep only Barranquilla ones
 listings = pd.read_csv('data/processed/listings_clean.csv')

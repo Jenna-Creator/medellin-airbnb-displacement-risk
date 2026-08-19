@@ -22,12 +22,12 @@ m = folium.Map(location=[6.2442, -75.5812], zoom_start=12.5, zoom_snap=0.25, til
 folium.Choropleth(
     geo_data=merged,
     data=merged,
-    columns=['codigo', 'displacement_risk_index'],
+    columns=['codigo', 'estrato_predominante'],
     key_on='feature.properties.codigo',
-    fill_color='RdYlBu_r',
+    fill_color='Blues',
     fill_opacity=0.7,
     line_opacity=0.2,
-    legend_name='Displacement Risk Index',
+    legend_name='Predominant Estrato',
     nan_fill_color='lightgray',
 ).add_to(m)
 
@@ -42,5 +42,5 @@ folium.GeoJson(
     ),
 ).add_to(m)
 
-m.save('data/processed/medellin_choropleth.html')
-print("Map saved! Open data/processed/medellin_choropleth.html in your browser.")
+m.save('data/processed/medellin_estrato_map.html')
+print("Map saved! Open data/processed/medellin_estrato_map.html in your browser.")

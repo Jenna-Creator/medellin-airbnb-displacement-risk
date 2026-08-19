@@ -19,12 +19,12 @@ m = folium.Map(location=[10.9685, -74.7813], zoom_start=12.5, zoom_snap=0.25, ti
 folium.Choropleth(
     geo_data=merged,
     data=merged,
-    columns=['barrio', 'displacement_risk_index'],
+    columns=['barrio', 'estrato_predominante'],
     key_on='feature.properties.barrio',
-    fill_color='RdYlBu_r',
+    fill_color='Blues',
     fill_opacity=0.7,
     line_opacity=0.2,
-    legend_name='Displacement Risk Index',
+    legend_name='Predominant Estrato',
     nan_fill_color='lightgray',
 ).add_to(m)
 
@@ -38,5 +38,5 @@ folium.GeoJson(
     ),
 ).add_to(m)
 
-m.save('data/processed/barranquilla_choropleth.html')
-print("Map saved! Open data/processed/barranquilla_choropleth.html in your browser.")
+m.save('data/processed/barranquilla_estrato_map.html')
+print("Map saved! Open data/processed/barranquilla_estrato_map.html in your browser.")
