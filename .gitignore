@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+data/raw/.DS_Store
+
+.DS_Store
+
+data/raw/*
+!data/raw/comuna_estrato.csv
