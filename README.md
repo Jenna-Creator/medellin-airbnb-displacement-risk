@@ -2,17 +2,17 @@
 
 A data pipeline that flags neighborhoods where short-term rental (Airbnb) growth is concentrated in historically low-income areas — a pattern often associated with tourism-driven displacement of long-term residents.
 
-Interactive maps: these are HTML files, so GitHub can't render them live in this README — download the repo and open them in a browser to explore.
+Interactive maps: click any link below to view the live map via [raw.githack.com](https://raw.githack.com) (GitHub itself only shows HTML files as source code, not rendered).
 
 **Displacement risk index (the main result):**
-- [`data/processed/medellin_choropleth.html`](data/processed/medellin_choropleth.html)
-- [`data/processed/barranquilla_choropleth.html`](data/processed/barranquilla_choropleth.html)
+- [Medellín](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/medellin_choropleth.html)
+- [Barranquilla](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/barranquilla_choropleth.html)
 
 **Inputs to the index, mapped separately** — useful for seeing what goes into the composite score before looking at the combined result:
-- [`data/processed/medellin_airbnb_density_map.html`](data/processed/medellin_airbnb_density_map.html) — Airbnb listings per km² (log scale)
-- [`data/processed/medellin_estrato_map.html`](data/processed/medellin_estrato_map.html) — predominant estrato
-- [`data/processed/barranquilla_airbnb_density_map.html`](data/processed/barranquilla_airbnb_density_map.html) — Airbnb listings per km² (log scale)
-- [`data/processed/barranquilla_estrato_map.html`](data/processed/barranquilla_estrato_map.html) — predominant estrato
+- [Medellín — Airbnb density (log scale)](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/medellin_airbnb_density_map.html)
+- [Medellín — predominant estrato](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/medellin_estrato_map.html)
+- [Barranquilla — Airbnb density (log scale)](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/barranquilla_airbnb_density_map.html)
+- [Barranquilla — predominant estrato](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/barranquilla_estrato_map.html)
 
 ## Problem statement
 
