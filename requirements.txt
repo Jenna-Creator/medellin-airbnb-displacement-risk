@@ -1,8 +1,6 @@
-cat > requirements.txt << 'EOF'
 pandas
 geopandas
 shapely
 folium
 streamlit
 streamlit-folium
-EOF
