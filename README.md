@@ -4,9 +4,11 @@ A data pipeline that flags neighborhoods where short-term rental (Airbnb) growth
 
 ## Explore the maps
 
-**Option 1 — Streamlit app (recommended):** run `streamlit run app.py` from the repo root for an interactive dropdown that lets you switch between both cities and all three map types (Displacement Risk Index, Airbnb Density, Predominant Estrato) in one page. Requires `pip3 install streamlit streamlit-folium` first (in addition to the packages below).
+**Live app (recommended):** [medellin-airbnb-displacement-risk-8zpij5vbtjx4vffmfuhhpw.streamlit.app](https://medellin-airbnb-displacement-risk-8zpij5vbtjx4vffmfuhhpw.streamlit.app) — an interactive dropdown lets you switch between both cities and all three map types (Displacement Risk Index, Airbnb Density, Predominant Estrato) in one page.
 
-**Option 2 — static HTML links:** click any link below to view a standalone version of each map via [raw.githack.com](https://raw.githack.com) (GitHub itself only shows HTML files as source code, not rendered).
+**Run it locally instead:** `pip3 install -r requirements.txt`, then `streamlit run app.py` from the repo root.
+
+**Static HTML links** (fallback, one map per link): click any link below to view a standalone version of each map via [raw.githack.com](https://raw.githack.com) (GitHub itself only shows HTML files as source code, not rendered).
 
 **Displacement risk index (the main result):**
 - [Medellín](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/medellin_choropleth.html)
@@ -18,7 +20,7 @@ A data pipeline that flags neighborhoods where short-term rental (Airbnb) growth
 - [Barranquilla — Airbnb density (log scale)](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/barranquilla_airbnb_density_map.html)
 - [Barranquilla — predominant estrato](https://raw.githack.com/Jenna-Creator/medellin-airbnb-displacement-risk/main/data/processed/barranquilla_estrato_map.html)
 
-Every map (Streamlit or static) includes an on-map title box explaining what you're looking at, hover tooltips with the underlying numbers per barrio, and click popups with additional detail — no need to leave the map to understand what a color or score means.
+Every map (live app or static) includes an on-map title box explaining what you're looking at, hover tooltips with the underlying numbers per barrio, and click popups with additional detail — no need to leave the map to understand what a color or score means.
 
 ## Problem statement
 
@@ -67,9 +69,9 @@ Raw data → clean/dedupe → spatial join → estrato merge/index → interacti
 | `12_barranquilla_airbnb_density_map.py` | Same as script 10, for Barranquilla. Outputs `data/processed/barranquilla_airbnb_density_map.html`. |
 | `13_barranquilla_estrato_map.py` | Same as script 11, for Barranquilla. Outputs `data/processed/barranquilla_estrato_map.html`. |
 
-`map_builder.py` is a shared module (not run directly) used by scripts 05, 08, and 10–13, plus `app.py`. It centralizes the actual map-building — the on-map title box, color scales, hover tooltips, and click popups — in one place, so all six maps (static or in the Streamlit app) render consistently and only need to be fixed or updated in one spot.
+`map_builder.py` is a shared module (not run directly) used by scripts 05, 08, and 10–13, plus `app.py`. It centralizes the actual map-building — the on-map title box, color scales, hover tooltips, and click popups — in one place, so all six maps (static or in the live app) render consistently and only need to be fixed or updated in one spot.
 
-`app.py` is the Streamlit app described above.
+`app.py` is the Streamlit app deployed at the live link above.
 
 `run_all.sh` reruns every script in `scripts/` in order (`01` through `13`), regenerating the full pipeline and all six static maps in one command.
 
@@ -124,10 +126,12 @@ scripts/
   12_barranquilla_airbnb_density_map.py
   13_barranquilla_estrato_map.py
   map_builder.py     Shared map-building + data-loading module used by scripts 05, 08, 10-13, and app.py
-app.py                Streamlit app with a dropdown to explore all six maps in one page
+app.py                Streamlit app with a dropdown to explore all six maps in one page (deployed live, see link above)
+requirements.txt       Python packages needed to run app.py or any script locally
+packages.txt           System-level (apt) packages needed for geopandas on Streamlit Cloud
 run_all.sh
 ```
 
 ## Tools
 
-Python, pandas, geopandas, shapely, Folium, Streamlit (`streamlit` + `streamlit-folium`). Data sourced via Apify (Airbnb scraper) and each city's official open-GIS ArcGIS Feature Services.
+Python, pandas, geopandas, shapely, Folium, Streamlit (`streamlit` + `streamlit-folium`). Data sourced via Apify (Airbnb scraper) and each city's official open-GIS ArcGIS Feature Services. Live app hosted on Streamlit Community Cloud.
