@@ -14,29 +14,10 @@ index_df = index_df.drop(columns=['localidad'])
 # already a clean matching string on both sides)
 merged = barrios.merge(index_df, on='barrio', how='left')
 
-m = folium.Map(location=[10.9685, -74.7813], zoom_start=12.5, zoom_snap=0.25, tiles='cartodbpositron')
+import sys
+sys.path.append('scripts')
+from map_builder import build_map
 
-folium.Choropleth(
-    geo_data=merged,
-    data=merged,
-    columns=['barrio', 'log_density'],
-    key_on='feature.properties.barrio',
-    fill_color='YlOrRd',
-    fill_opacity=0.7,
-    line_opacity=0.2,
-    legend_name='Airbnb Listings per km² (log scale)',
-    nan_fill_color='lightgray',
-).add_to(m)
-
-folium.GeoJson(
-    merged,
-    style_function=lambda x: {'fillOpacity': 0, 'weight': 0},
-    tooltip=folium.GeoJsonTooltip(
-        fields=['barrio', 'localidad', 'estrato_predominante', 'listing_count', 'displacement_risk_index'],
-        aliases=['Barrio:', 'Localidad:', 'Estrato:', 'Airbnb Listings:', 'Risk Index:'],
-        localize=True,
-    ),
-).add_to(m)
-
+m = build_map(merged, city='barranquilla', map_type='density')
 m.save('data/processed/barranquilla_airbnb_density_map.html')
 print("Map saved! Open data/processed/barranquilla_airbnb_density_map.html in your browser.")

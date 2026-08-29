@@ -16,31 +16,10 @@ index_df = index_df.drop(columns=['nombre_barrio', 'comuna'])
 merged = barrios.merge(index_df, on='codigo', how='left')
 
 # Base map, centered roughly on Medellín
-m = folium.Map(location=[6.2442, -75.5812], zoom_start=12.5, zoom_snap=0.25, tiles='cartodbpositron')
+import sys
+sys.path.append('scripts')
+from map_builder import build_map
 
-# Layer 1: the colored choropleth itself
-folium.Choropleth(
-    geo_data=merged,
-    data=merged,
-    columns=['codigo', 'log_density'],
-    key_on='feature.properties.codigo',
-    fill_color='YlOrRd',
-    fill_opacity=0.7,
-    line_opacity=0.2,
-    legend_name='Airbnb Listings per km² (log scale)',
-    nan_fill_color='lightgray',
-).add_to(m)
-
-# Layer 2: an invisible layer on top, just for hover tooltips
-folium.GeoJson(
-    merged,
-    style_function=lambda x: {'fillOpacity': 0, 'weight': 0},
-    tooltip=folium.GeoJsonTooltip(
-        fields=['nombre_barrio', 'comuna', 'estrato_predominante', 'listing_count', 'density_per_km2'],
-        aliases=['Barrio:', 'Comuna:', 'Estrato:', 'Airbnb Listings:', 'Density:'],
-        localize=True,
-    ),
-).add_to(m)
-
+m = build_map(merged, city='medellin', map_type='density')
 m.save('data/processed/medellin_airbnb_density_map.html')
 print("Map saved! Open data/processed/medellin_airbnb_density_map.html in your browser.")
