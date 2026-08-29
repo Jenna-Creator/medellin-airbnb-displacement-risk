@@ -1,0 +1,5 @@
+cat > packages.txt << 'EOF'
+gdal-bin
+libgdal-dev
+libspatialindex-dev
+EOF
