@@ -5,7 +5,7 @@ sys.path.append('scripts')
 from map_builder import build_map, load_merged_data
 
 st.set_page_config(page_title="Airbnb Displacement Risk", layout="wide")
-st.title("Airbnb Displacement Risk — Medellín & Barranquilla")
+st.title("Airbnb Displacement Risk by City")
 
 city = st.sidebar.selectbox("City", ["medellin", "barranquilla"], format_func=lambda x: x.title())
 map_type = st.sidebar.selectbox(

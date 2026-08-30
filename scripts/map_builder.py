@@ -39,7 +39,7 @@ MAP_TYPE_CONFIG = {
         'fill_color': 'Blues',
         'legend_name': 'Predominant Estrato',
         'title': 'Predominant Estrato',
-        'description': 'One of two inputs to the Displacement Risk Index. Colombia\'s socioeconomic scale, 1 (lowest income) to 6 (highest).',
+        'description': 'One of two inputs to the Displacement Risk Index. "Estrato" is Colombia\'s socioeconomic scale, 1 (lowest income) to 6 (highest income).',
     },
 }
 
