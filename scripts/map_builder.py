@@ -1,6 +1,6 @@
+import folium
 import pandas as pd
 import geopandas as gpd
-import folium
 
 CITY_CONFIG = {
     'medellin': {
@@ -11,7 +11,7 @@ CITY_CONFIG = {
         'subregion_label': 'Comuna',
     },
     'barranquilla': {
-        'center': [10.9685, -74.7813],
+        'center': [10.985, -74.807],
         'key_field': 'barrio',
         'name_field': 'barrio',
         'subregion_field': 'localidad',
@@ -39,12 +39,9 @@ MAP_TYPE_CONFIG = {
         'fill_color': 'Blues',
         'legend_name': 'Predominant Estrato',
         'title': 'Predominant Estrato',
-        'description': 'One of two inputs to the Displacement Risk Index. "Estrato" is Colombia\'s socioeconomic scale, 1 (lowest income) to 6 (highest income).',
+        'description': 'One of two inputs to the Displacement Risk Index. Colombia\'s socioeconomic scale, from 1 (lowest income) to 6 (highest).',
     },
 }
-
-import pandas as pd
-import geopandas as gpd
 
 
 def load_merged_data(city):
@@ -62,17 +59,28 @@ def load_merged_data(city):
         merged = barrios.merge(index_df, on='barrio', how='left')
     return merged
 
+
 def build_map(merged, city, map_type):
     city_cfg = CITY_CONFIG[city]
     type_cfg = MAP_TYPE_CONFIG[map_type]
 
     m = folium.Map(location=city_cfg['center'], zoom_start=12.5, zoom_snap=0.25, tiles='OpenStreetMap')
 
+    minx, miny, maxx, maxy = merged.total_bounds
+    fit_bounds_js = f'''
+<script>
+document.addEventListener("DOMContentLoaded", function() {{
+    {m.get_name()}.fitBounds([[{miny}, {minx}], [{maxy}, {maxx}]], {{animate: false}});
+}});
+</script>
+'''
+    m.get_root().html.add_child(folium.Element(fit_bounds_js))
+
     title_html = f'''
-    <div style="position: fixed; top: 10px; left: 50px; width: 320px; z-index: 9999;
-                background-color: white; padding: 10px; border: 2px solid grey;
-                border-radius: 5px; font-size: 14px;">
-    <b>{city.title()} \u2014 {type_cfg["title"]}</b><br>
+    <div style="position: fixed; top: 10px; left: 50px; width: 220px; z-index: 9999;
+                background-color: white; color: black; padding: 8px; border: 2px solid grey;
+                border-radius: 5px; font-size: 12px;">
+    <b>{city.title()} — {type_cfg["title"]}</b><br>
     {type_cfg["description"]}
     </div>
     '''
@@ -100,7 +108,7 @@ def build_map(merged, city, map_type):
         ),
         popup=folium.GeoJsonPopup(
             fields=[city_cfg['name_field'], city_cfg['subregion_field'], 'estrato_predominante', 'listing_count', 'density_per_km2', 'displacement_risk_index'],
-            aliases=['Barrio:', f"{city_cfg['subregion_label']}:", 'Estrato:', 'Airbnb Listings:', 'Listings per km\u00b2:', 'Risk Index:'],
+            aliases=['Barrio:', f"{city_cfg['subregion_label']}:", 'Estrato:', 'Airbnb Listings:', 'Listings per km²:', 'Risk Index:'],
             localize=True,
         ),
     ).add_to(m)
