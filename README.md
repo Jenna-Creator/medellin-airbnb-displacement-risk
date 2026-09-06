@@ -1,5 +1,7 @@
 # Airbnb Displacement Risk — Medellín & Barranquilla
 
+*(Repo name kept as `medellin-airbnb-displacement-risk` for historical/link-stability reasons — the project expanded to cover Barranquilla partway through.)*
+
 A data pipeline that flags neighborhoods where short-term rental (Airbnb) growth is concentrated in historically low-income areas — a pattern often associated with tourism-driven displacement of long-term residents.
 
 ## Explore the maps
