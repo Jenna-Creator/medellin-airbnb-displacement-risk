@@ -23,24 +23,64 @@ MAP_TYPE_CONFIG = {
     'composite': {
         'column': 'displacement_risk_index',
         'fill_color': 'RdYlBu_r',
-        'legend_name': 'Displacement Risk Index',
-        'title': 'Displacement Risk Index',
-        'description': 'Combines Airbnb density and estrato into one score (z-score of density minus z-score of estrato). Red = high density + low estrato (higher risk). Blue = low density + high estrato (lower risk).',
+        'en': {
+            'legend_name': 'Displacement Risk Index',
+            'title': 'Displacement Risk Index',
+            'description': 'Combines Airbnb housing saturation and estrato into one score (z-score of saturation minus z-score of estrato). Red = high saturation + low estrato (higher risk). Blue = low saturation + high estrato (lower risk).',
+        },
+        'es': {
+            'legend_name': 'Índice de Riesgo de Desplazamiento',
+            'title': 'Índice de Riesgo de Desplazamiento',
+            'description': 'Combina la saturación de vivienda por Airbnb y el estrato en un solo puntaje (z-score de saturación menos z-score de estrato). Rojo = alta saturación + estrato bajo (mayor riesgo). Azul = baja saturación + estrato alto (menor riesgo).',
+        },
+    },
+    'housing_saturation': {
+        'column': 'log_pct_homes',
+        'fill_color': 'YlOrRd',
+        'en': {
+            'legend_name': '% of Housing Units Listed on Airbnb (log scale)',
+            'title': 'Airbnb Housing Saturation',
+            'description': 'One of two inputs to the Displacement Risk Index. The share of a barrio\'s counted housing stock (DANE 2018 census) listed on Airbnb, shown on a log scale -- see the tooltip for the actual percentage. Barrios with too few counted housing units are excluded as statistically unreliable.',
+        },
+        'es': {
+            'legend_name': '% de Viviendas Listadas en Airbnb (escala logarítmica)',
+            'title': 'Saturación de Vivienda por Airbnb',
+            'description': 'Uno de los dos insumos del Índice de Riesgo de Desplazamiento. La proporción del parque de vivienda contado en un barrio (censo DANE 2018) que está listada en Airbnb, mostrada en escala logarítmica -- vea el recuadro para el porcentaje real. Los barrios con muy pocas viviendas contadas se excluyen por poca confiabilidad estadística.',
+        },
     },
     'density': {
         'column': 'log_density',
-        'fill_color': 'YlOrRd',
-        'legend_name': 'Airbnb Listings per km² (log scale)',
-        'title': 'Airbnb Density',
-        'description': 'The other input to the Displacement Risk Index. Shown on a log scale so outlier neighborhoods do not flatten the rest of the map -- see the tooltip for actual listing counts.',
+        'fill_color': 'Purples',
+        'en': {
+            'legend_name': 'Airbnb Listings per km² (log scale)',
+            'title': 'Airbnb Density (reference)',
+            'description': 'Not used in the index. Shown for reference: raw listing concentration per unit of land area, which assumes every neighborhood is equally populated -- the assumption the housing saturation map corrects for.',
+        },
+        'es': {
+            'legend_name': 'Alojamientos de Airbnb por km² (escala logarítmica)',
+            'title': 'Densidad de Airbnb (referencia)',
+            'description': 'No se usa en el índice. Se muestra como referencia: la concentración bruta de alojamientos por unidad de área, que asume que cada barrio tiene la misma densidad poblacional -- el supuesto que corrige el mapa de saturación de vivienda.',
+        },
     },
     'estrato': {
         'column': 'estrato_predominante',
         'fill_color': 'Blues',
-        'legend_name': 'Predominant Estrato',
-        'title': 'Predominant Estrato',
-        'description': 'One of two inputs to the Displacement Risk Index. Colombia\'s socioeconomic scale, from 1 (lowest income) to 6 (highest).',
+        'en': {
+            'legend_name': 'Predominant Estrato',
+            'title': 'Predominant Estrato',
+            'description': 'One of two inputs to the Displacement Risk Index. Colombia\'s socioeconomic scale, from 1 (lowest income) to 6 (highest).',
+        },
+        'es': {
+            'legend_name': 'Estrato Predominante',
+            'title': 'Estrato Predominante',
+            'description': 'Uno de los dos insumos del Índice de Riesgo de Desplazamiento. La escala socioeconómica de Colombia, de 1 (ingreso más bajo) a 6 (más alto).',
+        },
     },
+}
+
+DETAIL_ALIASES = {
+    'en': ['Barrio:', 'Estrato:', 'Airbnb Listings:', 'Total Housing Units:', '% Homes on Airbnb:', 'Saturation Rank:', 'Risk Index:'],
+    'es': ['Barrio:', 'Estrato:', 'Alojamientos de Airbnb:', 'Total de Viviendas:', '% de Viviendas en Airbnb:', 'Ranking de Saturación:', 'Índice de Riesgo:'],
 }
 
 
@@ -57,12 +97,16 @@ def load_merged_data(city):
         index_df = pd.read_csv('data/processed/barranquilla_displacement_index.csv')
         index_df = index_df.drop(columns=['localidad'])
         merged = barrios.merge(index_df, on='barrio', how='left')
+
+    merged['saturation_rank'] = merged['pct_homes_on_airbnb'].rank(pct=True, ascending=True)
+
     return merged
 
 
-def build_map(merged, city, map_type):
+def build_map(merged, city, map_type, lang='en'):
     city_cfg = CITY_CONFIG[city]
     type_cfg = MAP_TYPE_CONFIG[map_type]
+    text = type_cfg[lang]
 
     m = folium.Map(location=city_cfg['center'], zoom_start=12.5, zoom_snap=0.25, tiles='OpenStreetMap')
 
@@ -80,8 +124,8 @@ document.addEventListener("DOMContentLoaded", function() {{
     <div style="position: fixed; top: 10px; left: 50px; width: 220px; z-index: 9999;
                 background-color: white; color: black; padding: 8px; border: 2px solid grey;
                 border-radius: 5px; font-size: 12px;">
-    <b>{city.title()} — {type_cfg["title"]}</b><br>
-    {type_cfg["description"]}
+    <b>{city.title()} — {text["title"]}</b><br>
+    {text["description"]}
     </div>
     '''
     m.get_root().html.add_child(folium.Element(title_html))
@@ -94,21 +138,40 @@ document.addEventListener("DOMContentLoaded", function() {{
         fill_color=type_cfg['fill_color'],
         fill_opacity=0.7,
         line_opacity=0.2,
-        legend_name=type_cfg['legend_name'],
+        legend_name=text['legend_name'],
         nan_fill_color='lightgray',
     ).add_to(m)
+
+    merged['pct_homes_on_airbnb'] = merged['pct_homes_on_airbnb'].round(1)
+
+    if lang == 'es':
+        merged['saturation_rank_label'] = merged['saturation_rank'].apply(
+            lambda p: f"{max(1, round(100 * (1 - p)))}% superior" if pd.notna(p) else "N/A"
+        )
+    else:
+        merged['saturation_rank_label'] = merged['saturation_rank'].apply(
+            lambda p: f"Top {max(1, round(100 * (1 - p)))}%" if pd.notna(p) else "N/A"
+        )
+
+    detail_fields = [city_cfg['name_field'], city_cfg['subregion_field'], 'estrato_predominante',
+                      'listing_count', 'total_viviendas', 'pct_homes_on_airbnb',
+                      'saturation_rank_label', 'displacement_risk_index']
+    detail_aliases = [DETAIL_ALIASES[lang][0], f"{city_cfg['subregion_label']}:"] + DETAIL_ALIASES[lang][1:]
+    detail_style = "font-family: arial; font-size: 13px; background-color: white; color: #333; padding: 8px;"
 
     folium.GeoJson(
         merged,
         style_function=lambda x: {'fillOpacity': 0, 'weight': 0},
         tooltip=folium.GeoJsonTooltip(
-            fields=[city_cfg['name_field'], city_cfg['subregion_field'], 'estrato_predominante', 'listing_count', 'displacement_risk_index'],
-            aliases=['Barrio:', f"{city_cfg['subregion_label']}:", 'Estrato:', 'Airbnb Listings:', 'Risk Index:'],
+            fields=detail_fields,
+            aliases=detail_aliases,
+            style=detail_style,
             localize=True,
         ),
         popup=folium.GeoJsonPopup(
-            fields=[city_cfg['name_field'], city_cfg['subregion_field'], 'estrato_predominante', 'listing_count', 'density_per_km2', 'displacement_risk_index'],
-            aliases=['Barrio:', f"{city_cfg['subregion_label']}:", 'Estrato:', 'Airbnb Listings:', 'Listings per km²:', 'Risk Index:'],
+            fields=detail_fields,
+            aliases=detail_aliases,
+            style=detail_style,
             localize=True,
         ),
     ).add_to(m)

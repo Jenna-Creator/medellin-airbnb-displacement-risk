@@ -5,85 +5,145 @@ sys.path.append('scripts')
 from map_builder import build_map, load_merged_data
 
 st.set_page_config(page_title="Airbnb Displacement Risk", layout="wide")
-st.title("Airbnb Displacement Risk, by City")
 
-city = st.sidebar.selectbox("City", ["medellin", "barranquilla"], format_func=lambda x: x.title())
-map_type = st.sidebar.selectbox(
-    "Map",
-    ["estrato", "density", "composite"],
-    format_func=lambda x: {
-        "composite": "Displacement Risk Index",
-        "density": "Airbnb Density",
-        "estrato": "Predominant Estrato",
-    }[x],
-)
+lang = st.selectbox("Language / Idioma", ["en", "es"], format_func=lambda x: {"en": "English", "es": "Español"}[x])
 
-st.sidebar.markdown("""
----
-**Three maps per city:**
-
-- **Predominant Estrato** — each neighborhood's "estrato" or income level (1–6), no Airbnb data involved.
-- **Airbnb Density** — the raw concentration of Airbnb listings, on a log scale.
-- **Displacement Risk Index** — the combined score: high Airbnb density *and* low estrato (income level) together.
-
-Estrato and Airbnb Density are the two ingredients; the Risk Index is what you get when you combine them.
-""")
+TITLE = {
+    "en": "Airbnb Displacement Risk, by City",
+    "es": "Riesgo de Desplazamiento por Airbnb, por Ciudad",
+}
+st.title(TITLE[lang])
 
 CITY_DISPLAY_NAMES = {"medellin": "Medellín", "barranquilla": "Barranquilla"}
+CITY_LABEL = {"en": "City", "es": "Ciudad"}
+
+city = st.selectbox(
+    CITY_LABEL[lang],
+    ["medellin", "barranquilla"],
+    format_func=lambda x: CITY_DISPLAY_NAMES[x],
+)
+
+SETUP_TEXT = {
+    "en": "Airbnb listings can cluster in a wealthy neighborhood without putting anyone's housing at risk "
+          "(overtourism), or cluster in a lower-income neighborhood in a way that does (displacement risk). This index is built "
+          "to tell those two situations apart.",
+    "es": "Los alojamientos de Airbnb pueden concentrarse en un barrio de altos ingresos sin poner en "
+          "riesgo la vivienda de nadie (sobreturismo), o concentrarse en un barrio de bajos ingresos de "
+          "una manera que sí lo hace (riesgo de desplazamiento). Este índice está diseñado para distinguir entre esas dos situaciones.",
+}
+
+FORMULA_TEXT = {
+    "en": "z(log(% of homes on Airbnb)) − z(estrato)",
+    "es": "z(log(% de viviendas en Airbnb)) − z(estrato)",
+}
+
+RESULTS_HEADER = {"en": "Results for", "es": "Resultados para"}
 
 RESULTS_TEXT = {
-    "medellin": """
-**Comuna 13 (San Javier) tops the index.** The highest-risk barrios — San Javier No. 2,
-San Javier No. 1, Los Alcázares, La Pradera, Veinte de Julio — sit in the city's
-lowest-estrato comuna, also home to the Comuna 13 Graffitour, one of Medellín's
-most-visited tourist draws.
+    "en": {
+        "medellin": """
+**El Poblado and Manila top the index.** Both are high-estrato barrios where Airbnb listings now
+account for an unusually large — in El Poblado's case, implausibly large — share of the
+neighborhood's 2018-counted housing stock. Hover over the map for exact figures.
 
-**El Poblado is the opposite pattern.** It holds roughly a third of the city's Airbnb
-listings, but scores *low* on the index, since it's also uniformly high-estrato. That
-reads as overtourism/saturation in an already-wealthy area, not displacement pressure
-on low-income residents.
-""",
-    "barranquilla": """
-**Norte Centro Histórico and Suroccidente top the index.** San Luis, El Rosario, San
-Francisco, Ciudad Modesto, and La Paz — all low-estrato barrios — carry a
-disproportionate share of Airbnb listings relative to their income level.
+**Take those very high figures with a grain of salt.** They likely reflect real, extreme tourism
+pressure combined with a known limitation of this method: the 2018 census predates Medellín's
+post-2020 digital nomad boom (see the README for the full discussion).
 
-**Riomar mirrors El Poblado's pattern.** It's Barranquilla's wealthiest, most
-Airbnb-saturated localidad, but doesn't dominate the risk index since it's also
-uniformly high-estrato — density without displacement pressure.
+**San Javier's barrios also show up, lower down and for a different reason.** Their saturation
+percentages are small — not because there's no Airbnb activity, but because these barrios have
+thousands of housing units, so even a real, growing tourist presence (the Comuna 13 Graffitour draws
+heavy foot traffic) doesn't yet register as a large share of the housing stock. They rank where they
+do mostly on the strength of their very low estrato.
 """,
+        "barranquilla": """
+**Riomar's own barrios top the index.** El Poblado, Altamira, and Villa
+del Este — all estrato 5, in Barranquilla's wealthiest localidad — carry a meaningful share of their
+housing stock as Airbnb listings (hover over the map for exact figures). That's a genuine, if less
+extreme, echo of Medellín's El Poblado pattern: a high-income area absorbing real tourism pressure.
+
+**Norte - Centro Histórico rounds out the top of the list at lower estrato.** El Rosario, Colombia,
+Santa Ana, and Los Nogales combine smaller saturation percentages with a lower income level to land
+close to Riomar's barrios on the composite score — the classic displacement-risk combination of
+modest-but-real tourism pressure on lower-income housing.
+
+**Unlike Medellín, no barrio here approaches implausible saturation levels**, so the census-vintage
+caveat matters less for Barranquilla's results.
+""",
+    },
+    "es": {
+        "medellin": """
+**El Poblado y Manila encabezan el índice.** Ambos son barrios de estrato alto donde los alojamientos
+de Airbnb representan ahora una proporción inusualmente grande —en el caso de El Poblado,
+implausiblemente grande— del parque de vivienda contado en 2018. Pase el cursor sobre el mapa para
+ver las cifras exactas.
+
+**Tome esas cifras tan altas con cautela.** Probablemente reflejan una presión turística real y
+extrema, combinada con una limitación conocida de este método: el censo de 2018 es anterior al auge
+de nómadas digitales que vivió Medellín después de 2020 (vea el README para la discusión completa).
+
+**Los barrios de San Javier también aparecen, más abajo y por una razón distinta.** Sus porcentajes
+de saturación son pequeños —no porque no haya actividad de Airbnb, sino porque estos barrios tienen
+miles de viviendas, así que incluso una presencia turística real y creciente (el Graffitour de la
+Comuna 13 atrae mucho tráfico peatonal) todavía no representa una proporción grande del parque de
+vivienda. Su posición en el ranking se debe principalmente a su estrato muy bajo.
+""",
+        "barranquilla": """
+**Los barrios de Riomar encabezan el índice.** El Poblado, Altamira y Villa del Este —todos de
+estrato 5, en la localidad más adinerada de Barranquilla— tienen una proporción significativa de su
+parque de vivienda listada en Airbnb (pase el cursor sobre el mapa para ver las cifras exactas). Es
+un eco genuino, aunque menos extremo, del patrón de El Poblado en Medellín: una zona de altos
+ingresos que absorbe una presión turística real.
+
+**Norte - Centro Histórico completa la parte alta de la lista con estrato más bajo.** El Rosario,
+Colombia, Santa Ana y Los Nogales combinan porcentajes de saturación más pequeños con un nivel de
+ingreso más bajo, quedando cerca de los barrios de Riomar en el puntaje compuesto —la combinación
+clásica de riesgo de desplazamiento: presión turística modesta pero real sobre vivienda de bajos
+ingresos.
+
+**A diferencia de Medellín, ningún barrio aquí se acerca a niveles de saturación implausibles**, así
+que la advertencia sobre la antigüedad del censo importa menos para los resultados de Barranquilla.
+""",
+    },
+}
+
+EXPANDER_LABEL = {
+    "en": "See the individual inputs, and a reference density map",
+    "es": "Ver los insumos individuales y un mapa de referencia de densidad",
+}
+
+SECONDARY_MAP_LABEL = {"en": "Map", "es": "Mapa"}
+
+SECONDARY_MAP_OPTIONS_LABELS = {
+    "en": {
+        "housing_saturation": "Airbnb Housing Saturation",
+        "density": "Airbnb Density (reference, not used in the index)",
+        "estrato": "Predominant Estrato",
+    },
+    "es": {
+        "housing_saturation": "Saturación de Vivienda por Airbnb",
+        "density": "Densidad de Airbnb (referencia, no usada en el índice)",
+        "estrato": "Estrato Predominante",
+    },
 }
 
 merged = load_merged_data(city)
-m = build_map(merged, city=city, map_type=map_type)
 
-st.markdown("#### Background")
+st.markdown(SETUP_TEXT[lang])
+st.code(FORMULA_TEXT[lang], language=None)
 
-st.markdown(" Many cities in Latin America (and all over the world) have seen sharp growth in short-term rental "
-    "listings over the past several years. A common concern raised about this growth, "
-    "in Medellín especially, is that it drives up housing costs and displaces long-term "
-    "residents once a historically low-income area becomes a tourist draw. <br><br>"
-    "Raw listing counts alone don't distinguish between two very different stories: "
-    "a wealthy neighborhood absorbing a large volume of tourists (an overtourism/saturation problem)"
-    " versus a low-income neighborhood absorbing a smaller but fast-growing share of tourist rentals"
-    " (a displacement-risk problem). This project builds a simple, transparent index designed to "
-    "separate those two patterns.", unsafe_allow_html=True)
-
-st.markdown("#### How the index works")
-st.markdown(
-    "Each barrio is scored on two things: **Airbnb listing density** (active "
-    "listings per km²) and **estrato**, Colombia's 1–6 socioeconomic scale. "
-    "The Displacement Risk Index is a difference of z-scores:"
-)
-st.code("z(log(density)) − z(estrato)", language=None)
-st.markdown("A high score means unusually high rental density paired with unusually "
-    "low estrato — the specific combination associated with displacement "
-    "pressure. This is a relative screening tool, not a causal claim.<br><br>"
-    "Use the filters on the left to toggle between the different cities "
-    "available as well as the three maps: two inputs to the index and the composite Displacement Risk "
-    "Index.", unsafe_allow_html=True)
-
+m = build_map(merged, city=city, map_type="composite", lang=lang)
 st_folium(m, width=1000, height=600)
 
-st.markdown(f"#### Results for {CITY_DISPLAY_NAMES[city]}")
-st.markdown(RESULTS_TEXT[city])
+st.markdown(f"#### {RESULTS_HEADER[lang]} {CITY_DISPLAY_NAMES[city]}")
+st.markdown(RESULTS_TEXT[lang][city])
+
+with st.expander(EXPANDER_LABEL[lang]):
+    secondary_type = st.selectbox(
+        SECONDARY_MAP_LABEL[lang],
+        ["estrato", "housing_saturation", "density"],
+        format_func=lambda x: SECONDARY_MAP_OPTIONS_LABELS[lang][x],
+        key="secondary_map_type",
+    )
+    m2 = build_map(merged, city=city, map_type=secondary_type, lang=lang)
+    st_folium(m2, width=1000, height=600, key="secondary_map")
