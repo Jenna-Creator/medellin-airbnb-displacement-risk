@@ -127,6 +127,7 @@ Source data:
 - **Scraper budget cap**: the Apify scrape was run separately per comuna/localidad (avoiding cross-neighborhood competition for one shared budget), but if any single comuna's true listing count exceeded that comuna's individual cap, its listings would still be undercounted relative to its real size. Worth spot-checking Apify's run logs for the highest-volume comunas (e.g., El Poblado) to confirm each run completed naturally rather than hitting its limit.
 - **Estrato sample size (Barranquilla)**: some barrios have very few parcels in the estrato dataset, making their "predominant" value less statistically reliable than barrios with hundreds of parcels.
 - **Comuna vs. barrio naming (Medellín)**: "El Poblado" is both a comuna (a large, popularly-known district) and the name of one small barrio inside it. The choropleth's barrio-level detail for "El Poblado" only reflects that one small polygon — the area people usually mean by "El Poblado" is spread across many separately-named barrios (Provenza, Manila, Castropol, El Tesoro, etc.), which is where most of that comuna's Airbnb listings actually show up.
+- - **5 Barranquilla barrios have no estrato data at all**: Bernardo Hoyos, Betania, and Los Ángeles I/II/III have zero parcels tagged in the `ESTRATO_1994` layer (confirmed by searching the full parcel dataset for name variants, not just a naming mismatch). They render gray on the map and are excluded from the index rather than assigned a misleading value.
 
 ## Repo structure
 
