@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_folium import st_folium
 import sys
 sys.path.append('scripts')
-from map_builder import build_map, load_merged_data
+from map_builder import build_map, load_merged_data, get_top_barrios_str
 
 @st.cache_data
 def get_merged_data(city):
@@ -43,14 +43,14 @@ FORMULA_TEXT = {
 
 RESULTS_HEADER = {"en": "Results for", "es": "Resultados para"}
 
-RESULTS_TEXT = {
+RESULTS_TEMPLATE = {
     "en": {
         "medellin": """
-**El Poblado and Manila top the index.** Both are high-estrato barrios where Airbnb listings now
-account for an unusually large — in El Poblado's case, implausibly large — share of the
-neighborhood's 2018-counted housing stock. Hover over the map for exact figures.
+**{top} top the index.** These barrios show Airbnb listings accounting for an unusually large —
+in some cases implausibly large — share of the neighborhood's 2018-counted housing stock. Hover
+over the map for exact figures.
 
-**Take those very high figures with a grain of salt.** They likely reflect real, extreme tourism
+**Take very high figures with a grain of salt.** They likely reflect real, extreme tourism
 pressure combined with a known limitation of this method: the 2018 census predates Medellín's
 post-2020 digital nomad boom (see the README for the full discussion).
 
@@ -61,14 +61,13 @@ heavy foot traffic) doesn't yet register as a large share of the housing stock. 
 do mostly on the strength of their very low estrato.
 """,
         "barranquilla": """
-**Riomar's own barrios top the index.** El Poblado, Altamira, and Villa
-del Este — all estrato 5, in Barranquilla's wealthiest localidad — carry a meaningful share of their
-housing stock as Airbnb listings (hover over the map for exact figures). That's a genuine, if less
-extreme, echo of Medellín's El Poblado pattern: a high-income area absorbing real tourism pressure.
+**{top} top the index.** These barrios carry a meaningful share of their housing stock as Airbnb
+listings (hover over the map for exact figures) — a pattern that echoes what shows up in Medellín's
+wealthiest, most Airbnb-saturated barrios.
 
 **Norte - Centro Histórico rounds out the top of the list at lower estrato.** El Rosario, Colombia,
 Santa Ana, and Los Nogales combine smaller saturation percentages with a lower income level to land
-close to Riomar's barrios on the composite score — the classic displacement-risk combination of
+close to the top barrios on the composite score — the classic displacement-risk combination of
 modest-but-real tourism pressure on lower-income housing.
 
 **Unlike Medellín, no barrio here approaches implausible saturation levels**, so the census-vintage
@@ -77,10 +76,9 @@ caveat matters less for Barranquilla's results.
     },
     "es": {
         "medellin": """
-**El Poblado y Manila encabezan el índice.** Ambos son barrios de estrato alto donde los alojamientos
-de Airbnb representan ahora una proporción inusualmente grande —en el caso de El Poblado,
-implausiblemente grande— del parque de vivienda contado en 2018. Pase el cursor sobre el mapa para
-ver las cifras exactas.
+**{top} encabezan el índice.** Estos barrios muestran alojamientos de Airbnb que representan una
+proporción inusualmente grande —a veces implausiblemente grande— del parque de vivienda contado en
+2018. Pase el cursor sobre el mapa para ver las cifras exactas.
 
 **Tome esas cifras tan altas con cautela.** Probablemente reflejan una presión turística real y
 extrema, combinada con una limitación conocida de este método: el censo de 2018 es anterior al auge
@@ -93,15 +91,13 @@ Comuna 13 atrae mucho tráfico peatonal) todavía no representa una proporción 
 vivienda. Su posición en el ranking se debe principalmente a su estrato muy bajo.
 """,
         "barranquilla": """
-**Los barrios de Riomar encabezan el índice.** El Poblado, Altamira y Villa del Este —todos de
-estrato 5, en la localidad más adinerada de Barranquilla— tienen una proporción significativa de su
-parque de vivienda listada en Airbnb (pase el cursor sobre el mapa para ver las cifras exactas). Es
-un eco genuino, aunque menos extremo, del patrón de El Poblado en Medellín: una zona de altos
-ingresos que absorbe una presión turística real.
+**{top} encabezan el índice.** Estos barrios tienen una proporción significativa de su parque de
+vivienda listada en Airbnb (pase el cursor sobre el mapa para ver las cifras exactas) —un patrón que
+recuerda al de los barrios más adinerados y saturados de Airbnb en Medellín.
 
 **Norte - Centro Histórico completa la parte alta de la lista con estrato más bajo.** El Rosario,
 Colombia, Santa Ana y Los Nogales combinan porcentajes de saturación más pequeños con un nivel de
-ingreso más bajo, quedando cerca de los barrios de Riomar en el puntaje compuesto —la combinación
+ingreso más bajo, quedando cerca de los barrios principales en el puntaje compuesto —la combinación
 clásica de riesgo de desplazamiento: presión turística modesta pero real sobre vivienda de bajos
 ingresos.
 
@@ -140,7 +136,8 @@ m = build_map(merged, city=city, map_type="composite", lang=lang)
 st_folium(m, width=1000, height=600, returned_objects=[])
 
 st.markdown(f"#### {RESULTS_HEADER[lang]} {CITY_DISPLAY_NAMES[city]}")
-st.markdown(RESULTS_TEXT[lang][city])
+top_barrios_str = get_top_barrios_str(city, n=2, lang=lang)
+st.markdown(RESULTS_TEMPLATE[lang][city].format(top=top_barrios_str))
 
 with st.expander(EXPANDER_LABEL[lang]):
     secondary_type = st.selectbox(

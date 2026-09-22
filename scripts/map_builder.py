@@ -177,3 +177,16 @@ document.addEventListener("DOMContentLoaded", function() {{
     ).add_to(m)
 
     return m
+
+
+def get_top_barrios_str(city, n=2, lang='en'):
+    """Returns the top n barrios by displacement_risk_index, formatted as a
+    natural-language list ("A and B" / "A y B"), read live from the CSV so
+    this can never drift out of sync with the actual data."""
+    df = pd.read_csv(f'data/processed/{city}_displacement_index.csv')
+    name_field = 'nombre_barrio' if city == 'medellin' else 'barrio'
+    top_names = df.sort_values('displacement_risk_index', ascending=False).head(n)[name_field].tolist()
+    conjunction = 'and' if lang == 'en' else 'y'
+    if len(top_names) == 1:
+        return top_names[0]
+    return f"{', '.join(top_names[:-1])} {conjunction} {top_names[-1]}"

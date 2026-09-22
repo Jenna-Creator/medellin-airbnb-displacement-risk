@@ -30,7 +30,7 @@ Every map (live app or static) includes an on-map title box explaining what you'
 
 ## Problem statement
 
-Colombia's two largest cities, Medellín and Barranquilla, have both seen sharp growth in short-term rental listings over the past several years. A common concern raised about this growth — in Medellín especially, around neighborhoods like Comuna 13 (San Javier) — is that it drives up housing costs and displaces long-term residents once a historically low-income area becomes a tourist draw.
+Two major Colombian cities, Medellín (the country's second-largest) and Barranquilla (its fourth-largest, and principal Caribbean port), have both seen sharp growth in short-term rental listings over the past several years.
 
 Raw listing counts alone don't distinguish between two very different stories: a wealthy neighborhood absorbing a large volume of tourists (an overtourism/saturation problem) versus a low-income neighborhood absorbing a smaller but fast-growing share of tourist rentals (a displacement-risk problem). This project builds a simple, transparent index designed to separate those two patterns.
 
@@ -113,6 +113,10 @@ Source data:
 - **Estrato (Medellín)** — Encuesta de Calidad de Vida (ECV), a household survey published per comuna by the Alcaldía de Medellín. No public dataset breaks estrato down below the comuna level, which is a limitation below.
 - **Estrato (Barranquilla)** — `ESTRATO_1994`, a parcel-level stratification layer published by Barranquilla's Secretaría Distrital de Planeación (via ArcGIS Feature Service). Despite the "1994" name — a reference to Law 142 of 1994, which created Colombia's estrato system — the layer is actively maintained; edit timestamps show updates as recent as 2025. This is more granular than Medellín's comuna-level estrato: each barrio's predominant stratum is computed directly from its own parcels rather than inherited from a larger area.
 - **Housing units (both cities)** — DANE's Marco Geoestadístico Nacional 2018 integrado con el Censo Nacional de Población y Vivienda (CNPV) 2018, at the manzana (census block) level. Downloaded as a national GeoPackage, filtered to Medellín and Barranquilla, and aggregated up to the barrio level (scripts 14–15). This is the most recent manzana-level housing count DANE has published — see Limitations for what that means for interpreting the results.
+
+<!-- Results below were last verified against the data on 2026-09-22. Re-check barrio names/figures after any pipeline rerun. -->
+
+## Results
 
 ## Results
 
