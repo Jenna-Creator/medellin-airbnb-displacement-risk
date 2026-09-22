@@ -4,6 +4,10 @@ import sys
 sys.path.append('scripts')
 from map_builder import build_map, load_merged_data
 
+@st.cache_data
+def get_merged_data(city):
+    return load_merged_data(city)
+
 st.set_page_config(page_title="Airbnb Displacement Risk", layout="wide")
 
 lang = st.selectbox("Language / Idioma", ["en", "es"], format_func=lambda x: {"en": "English", "es": "Español"}[x])
@@ -127,13 +131,13 @@ SECONDARY_MAP_OPTIONS_LABELS = {
     },
 }
 
-merged = load_merged_data(city)
+merged = get_merged_data(city)
 
 st.markdown(SETUP_TEXT[lang])
 st.code(FORMULA_TEXT[lang], language=None)
 
 m = build_map(merged, city=city, map_type="composite", lang=lang)
-st_folium(m, width=1000, height=600)
+st_folium(m, width=1000, height=600, returned_objects=[])
 
 st.markdown(f"#### {RESULTS_HEADER[lang]} {CITY_DISPLAY_NAMES[city]}")
 st.markdown(RESULTS_TEXT[lang][city])
@@ -146,4 +150,4 @@ with st.expander(EXPANDER_LABEL[lang]):
         key="secondary_map_type",
     )
     m2 = build_map(merged, city=city, map_type=secondary_type, lang=lang)
-    st_folium(m2, width=1000, height=600, key="secondary_map")
+    st_folium(m2, width=1000, height=600, key="secondary_map", returned_objects=[])
