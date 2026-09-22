@@ -97,6 +97,13 @@ Raw data → clean/dedupe → spatial join → housing + estrato merge/index →
 1. **Raw Airbnb scrapes** (`data/raw/*.json`, one batch per comuna/localidad from the Apify `tri_angle/airbnb-scraper` actor). These aren't included in the repo. Without them, `01_clean_scrapes.py` — and everything downstream of it — can't run. If you just want to explore the results rather than reproduce the scrape itself, skip `run_all.sh` entirely: the processed CSVs and every HTML/live-app map are already committed and up to date.
 2. **DANE's national manzana GeoPackage** (`data/raw/dane_manzanas.gpkg`, ~661MB), needed by `14_fetch_dane_housing.py`. It's too large for a normal git push (exceeds GitHub's 100MB per-file limit), so it isn't committed either. Download it from [DANE's Marco Geoestadístico Nacional 2018 integrado](https://geoportal.dane.gov.co/descargas/mgn-integrado/MGN_ANM_MANZANA_(Geopackage).zip), unzip it, and place the `.gpkg` file at `data/raw/dane_manzanas.gpkg` before running `run_all.sh` or `14_fetch_dane_housing.py` directly.
 
+### Running the pipeline from a fresh clone
+
+`run_all.sh` regenerates every processed file and map from source, but two inputs can't be committed to this repo and need to be in place first:
+
+1. **Raw Airbnb scrapes** (`data/raw/*.json`, one batch per comuna/localidad from the Apify `tri_angle/airbnb-scraper` actor). These aren't included in the repo. Without them, `01_clean_scrapes.py` — and everything downstream of it — can't run. If you just want to explore the results rather than reproduce the scrape itself, skip `run_all.sh` entirely: the processed CSVs and every HTML/live-app map are already committed and up to date.
+2. **DANE's national manzana GeoPackage** (`data/raw/dane_manzanas.gpkg`, ~661MB), needed by `14_fetch_dane_housing.py`. It's too large for a normal git push (exceeds GitHub's 100MB per-file limit), so it isn't committed either. Download it from [DANE's Marco Geoestadístico Nacional 2018 integrado](https://geoportal.dane.gov.co/descargas/mgn-integrado/MGN_ANM_MANZANA_(Geopackage).zip), unzip it, and place the `.gpkg` file at `data/raw/dane_manzanas.gpkg` before running `run_all.sh` or `14_fetch_dane_housing.py` directly.
+
 Everything else in `run_all.sh` — the barrio boundary and estrato fetches (scripts 06, 09) — pulls live from each city's public ArcGIS Feature Service and needs no manual setup.
 
 Source data:
