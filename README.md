@@ -30,7 +30,7 @@ Every map (live app or static) includes an on-map title box explaining what you'
 
 ## Problem statement
 
-Colombia's two largest cities, Medellín and Barranquilla, have both seen sharp growth in short-term rental listings over the past several years. A common concern raised about this growth — in Medellín especially, around neighborhoods like Comuna 13 (San Javier) — is that it drives up housing costs and displaces long-term residents once a historically low-income area becomes a tourist draw.
+Two major Colombian cities, Medellín (the country's second-largest) and Barranquilla (its fourth-largest, and principal Caribbean port), have both seen sharp growth in short-term rental listings over the past several years.
 
 Raw listing counts alone don't distinguish between two very different stories: a wealthy neighborhood absorbing a large volume of tourists (an overtourism/saturation problem) versus a low-income neighborhood absorbing a smaller but fast-growing share of tourist rentals (a displacement-risk problem). This project builds a simple, transparent index designed to separate those two patterns.
 
