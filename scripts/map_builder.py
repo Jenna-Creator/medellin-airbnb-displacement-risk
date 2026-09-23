@@ -26,12 +26,12 @@ MAP_TYPE_CONFIG = {
         'en': {
             'legend_name': 'Displacement Risk Index',
             'title': 'Displacement Risk Index',
-            'description': 'Combines Airbnb housing saturation and estrato into one score (z-score of saturation minus z-score of estrato). Red = high saturation + low estrato (higher risk). Blue = low saturation + high estrato (lower risk).',
+            'description': 'Combines Airbnb housing saturation and estrato into one score (percentile rank of saturation minus percentile rank of estrato). Red = high saturation + low estrato (higher risk). Blue = low saturation + high estrato (lower risk).',
         },
         'es': {
             'legend_name': 'Índice de Riesgo de Desplazamiento',
             'title': 'Índice de Riesgo de Desplazamiento',
-            'description': 'Combina la saturación de vivienda por Airbnb y el estrato en un solo puntaje (z-score de saturación menos z-score de estrato). Rojo = alta saturación + estrato bajo (mayor riesgo). Azul = baja saturación + estrato alto (menor riesgo).',
+            'description': 'Combina la saturación de vivienda por Airbnb y el estrato en un solo puntaje (percentil de saturación menos percentil de estrato). Rojo = alta saturación + estrato bajo (mayor riesgo). Azul = baja saturación + estrato alto (menor riesgo).',
         },
     },
     'housing_saturation': {
@@ -98,7 +98,6 @@ def load_merged_data(city):
         index_df = index_df.drop(columns=['localidad'])
         merged = barrios.merge(index_df, on='barrio', how='left')
 
-    merged['saturation_rank'] = merged['pct_homes_on_airbnb'].rank(pct=True, ascending=True)
 
     return merged
 
